@@ -7,7 +7,7 @@ const userSchema = new Schema(
       {
         type: Schema.Types.ObjectId,
         ref: "Deck",
-        required: [true, "Please include the deck id"],
+        // required: [true, "Please include the deck id"],
       },
     ],
     username: {
@@ -17,11 +17,16 @@ const userSchema = new Schema(
     },
     email: {
       type: String,
-      required: [true, "Please include the back"],
+      required: [true, "Please include the email"],
     },
     password: {
       type: String,
       minlength: 6,
+      required: true,
+    },
+    role: {
+      type: String,
+      default: "user",
       required: true,
     },
   },

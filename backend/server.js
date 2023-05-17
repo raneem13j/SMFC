@@ -4,6 +4,7 @@ import morgan from "morgan";
 import bodyParser from "body-parser";
 import cors from "cors";
 import connectDB from "./Config/db.js";
+import cookieParser from "cookie-parser";
 import categoryRoute from "./Routes/categoryRoute.js";
 import topicRoute from "./Routes/topicRoute.js";
 import subcategoryRoute from "./Routes/subcategoryRoute.js";
@@ -13,6 +14,9 @@ import voteRoute from "./Routes/voteRoute.js";
 import savedRoute from "./Routes/savedDeckRoute.js";
 import userfollowerRoute from "./Routes/userfollowerRoute.js";
 import topicfollowerRoute from "./Routes/topicfollowerRoute.js";
+import userRoute from "./Routes/userRoute.js";
+import {adminAuth, userAuth} from './Middlewares/auth.js'
+
 
 dotenv.config();
 
@@ -28,7 +32,7 @@ app.use(bodyParser.json());
 if (process.env.NODE_ENV === "development"){
   app.use(morgan('dev'));
 }
-
+app.use(cookieParser());
 app.use(express.json());
 app.use(cors());
 
@@ -42,6 +46,10 @@ app.use("/vote", voteRoute);
 app.use("/userfollower", userfollowerRoute);
 app.use("/topicfollower", topicfollowerRoute);
 app.use("/saved", savedRoute);
+app.use("/user", userRoute);
+//authintication to 
+app.get("/admin", adminAuth, (req, res) => res.send("Admin Route"));
+app.get("/basic", userAuth, (req, res) => res.send("User Route"));
 
 
 
