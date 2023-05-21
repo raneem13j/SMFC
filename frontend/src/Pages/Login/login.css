@@ -53,22 +53,27 @@
 	background-color: transparent;
 	position: relative;
 	cursor: pointer;
+	color:#2c6487;
 }
 
 .login-slider {
 	height: 60px;
 	width: 150px;
 	border-radius: 50px;
-	background-image: linear-gradient(to right,
+	/* background-image: linear-gradient(to right,
     
     #6794ad   ,
 	#2c6487  );
-    
+     */
+
+	 
+	 border:#f4b31a solid 3px;
 	position: absolute;
 	top: 20px;
 	left:95px;
 	transition: all 0.5s ease-in-out;
 }
+
 
 .movelogin-slider {
 	left: 244px;
@@ -104,7 +109,7 @@
 }
 
 .login-signup-box {
-	gap: 30px;
+	gap: 40px;
 }
 
 .ele {
@@ -123,13 +128,20 @@
 	height: 60px;
 	width: 150px;
 	border-radius: 50px;
-	background-image: linear-gradient(to right,
+	background-color: transparent;
+	/* background-image: linear-gradient(to right,
     #6794ad  ,
     
-	#2c6487   );
+	#2c6487   ); */
 	font-size: 22px;
-	border: none;
+	color:#2c6487;
+	 border:#f4b31a solid 2px;
+}
+.login-clkbtn:hover{
+
 	cursor: pointer;
+	color:white;
+   background-color: #2c6487;
 }
 
 /* For Responsiveness of the page */

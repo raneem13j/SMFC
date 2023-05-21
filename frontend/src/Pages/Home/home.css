@@ -103,7 +103,7 @@
   margin: auto;
 }
 .posts-section{
- margin: 50px;
+ margin: 15px;
  display: grid;
  grid-template-columns: 1fr 1fr;
   
@@ -153,4 +153,23 @@
 
  .filterandpost{
   margin-left: 90px;
+ }
+ .no-decks-message{
+  margin-left: 90px;
+  color: #2c6487;
+ }
+.clear-filters-button{
+  padding: 4px;
+  margin: 10px;
+  color:#2c6487;
+  border:#f4b31a solid 2px;
+  border-radius: 12px;
+
+}
+
+.clear-filters-button:hover {
+  cursor: pointer;
+  color:white;
+ background-color: #2c6487;
+  
  }

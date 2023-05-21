@@ -1,8 +1,8 @@
 import React from 'react';
 import "./navbar.css";
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import logo from "../../Images/Screenshot from 2023-05-09 16-57-12.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import logo from "../../Images/Screenshot from 2023-05-09 16-57-12.png"
+import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
 
 

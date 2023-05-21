@@ -66,11 +66,11 @@ function Login() {
               className="login-password ele"
               placeholder="password"
             />
-            <input
+            {/* <input
               type="password"
               className="login-password ele"
               placeholder="Confirm password"
-            />
+            /> */}
             <button className="login-clkbtn">Signup</button>
           </div>
         </div>
