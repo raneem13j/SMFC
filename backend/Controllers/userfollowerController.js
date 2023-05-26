@@ -1,16 +1,27 @@
 import Userfollower from "../Models/userfollowerModel.js";
 
 
-// export const getAllVotes = async (req, res) => {
-//   try {
-//       const votes = await Vote.find()
-//       .populate("user_id", "username  email  password")
-//       .populate("deck_id", "name");
-//       res.status(200).json(votes);
-//     } catch (err) {
-//       res.status(500).json({ error: err });
-//     }
-// };
+export const getFollowingById = async (req, res) => {
+  try {
+      const userId = req.params.id
+      const followers = await Userfollower.find({follower: userId})
+      .populate("following", "username");
+      res.status(200).json(followers);
+    } catch (err) {
+      res.status(500).json({ error: err });
+    }
+};
+
+export const getFollowersById = async (req, res) => {
+  try {
+    const userId = req.params.id
+    const following = await Userfollower.find({following: userId})
+    .populate("follower", "username");
+    res.status(200).json(following);
+  } catch (err) {
+    res.status(500).json({ error: err });
+  }
+}
 
 export const getIsFollowingById = async (req, res) => {
   try {

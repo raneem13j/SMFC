@@ -88,13 +88,14 @@ export const editVote = async (req, res) => {
 
 export const deleteVote = async (req, res) => {
   try {
-    const id = req.params.id;
-    const vote = await Vote.findOne({ _id: id });
+    const userId = req.params.userId;
+    const deckId = req.params.deckId;
+    const vote = await Vote.findOne({ user_id: userId, deck_id: deckId });
     if (!vote) {
       res.status(404).json({ message: "ID not found." });
       return;
     }
-    await Vote.deleteOne({ _id: id });
+    await Vote.deleteOne({ user_id: userId, deck_id: deckId });
     res.status(200).json({ message: "Document deleted successfully." });
   } catch (error) {
     console.error(error);

@@ -3,6 +3,13 @@ import "./sidebar.css";
 import { Link } from "react-router-dom";
 
 function Sidebar() {
+  const authenticated = sessionStorage.getItem("token");
+
+  const handleLogout = () => {
+    console.log("Logout");
+    sessionStorage.clear("token");
+    window.location.href = "/";
+  };
   return (
     <div>
       <div className="sidebar-list">
@@ -18,21 +25,21 @@ function Sidebar() {
             <div className="dashboard_main">
               <div className="dashboard">
                 <div className="text">
-                  <Link to="/notifi">Notifications</Link>
+                  <Link to="/topic">Topics</Link>
                 </div>
               </div>
             </div>
             <div className="dashboard_main">
               <div className="dashboard">
                 <div className="text">
-                  <Link to="/profil">My Profil</Link>
+                  <Link to="/myprofil">My Profile</Link>
                 </div>
               </div>
             </div>
             <div className="dashboard_main">
               <div className="dashboard">
-                <div className="text">
-                  <Link to="/logout">Logout</Link>
+                <div className="text" onClick={authenticated && handleLogout}>
+                  <Link to="/login">Logout</Link>
                 </div>
               </div>
             </div>

@@ -6,10 +6,6 @@ const deckSchema = new Schema({
     type: String,
     required: [true, "Please include the deck"],
   },
-  description: {
-    type: String,
-    required: true,
-  },
   level: {
     type: String,
     required: [true, "Please include the product level"],

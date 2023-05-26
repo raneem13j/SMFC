@@ -13,8 +13,13 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import IconButton, { IconButtonProps } from "@mui/material/IconButton";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 
 function Home() {
+  const userId = sessionStorage.getItem("Id");
+  const [user, setUser] = useState([]);
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
@@ -24,6 +29,22 @@ function Home() {
   const [decks, setDecks] = useState([]);
   const [filteredDecks, setFilteredDecks] = useState([decks]);
   const [hasFilters, setHasFilters] = useState(false);
+  const [vote, setVote] = useState([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/user/${userId}`
+        );
+        setUser(response.data);
+        // console.log("decks", response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchData();
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -65,9 +86,11 @@ function Home() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get("http://localhost:5000/deck");
+        const response = await axios.get(
+          `http://localhost:5000/deck/all/${userId}`
+        );
         setDecks(response.data);
-        // console.log("decks",response.data)
+        // console.log("decks", response.data);
       } catch (error) {
         console.log(error);
       }
@@ -171,6 +194,142 @@ function Home() {
     </li>
   ));
 
+  const handleThumbUpClick = async (e, deckId, voteType) => {
+    e.preventDefault();
+    // console.log(userId);
+    // console.log(deckId);
+    // console.log(voteType);
+
+    if(voteType === "down" && voteType !== "up"){
+      try{
+        const response = await axios.delete(
+          `http://localhost:5000/vote/${userId}/${deckId}`
+        );
+        setVote("sucssful", response.data);
+        // console.log(response.data);
+      }  catch (error) {
+        console.error(error);
+      }
+      try {
+        const response = await axios.post(
+          `http://localhost:5000/vote/${userId}`,
+          {
+            deck_id: deckId,
+            voteType: "up",
+          }
+        );
+        setVote("sucssful", response.data);
+        // console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+      
+    }else if(voteType !== "up" && voteType !== "down"){
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/vote/${userId}`,
+        {
+          deck_id: deckId,
+          voteType: "up",
+        }
+      );
+      setVote("sucssful", response.data);
+      // console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }}
+         else if(voteType === "up"){
+      try{
+        const response = await axios.delete(
+          `http://localhost:5000/vote/${userId}/${deckId}`
+        );
+        setVote("sucssful", response.data);
+        // console.log(response.data);
+      }  catch (error) {
+        console.error(error);
+      }
+    }
+    try{
+        const response = await axios.get(
+        `http://localhost:5000/deck/all/${userId}`
+      );
+      setDecks(response.data);
+      // console.log("decks", response.data);
+    
+    }  catch (error) {
+        console.error(error);
+      }
+
+  };
+
+  const handleThumbDownClick = async (e, deckId, voteType) => {
+    e.preventDefault();
+    // console.log(userId);
+    // console.log(deckId);
+    // console.log(voteType);
+
+    if(voteType === "up" && voteType !== "down"){
+      try{
+        const response = await axios.delete(
+          `http://localhost:5000/vote/${userId}/${deckId}`
+        );
+        setVote("sucssful", response.data);
+        // console.log(response.data);
+      }  catch (error) {
+        console.error(error);
+      }
+      try {
+        const response = await axios.post(
+          `http://localhost:5000/vote/${userId}`,
+          {
+            deck_id: deckId,
+            voteType: "down",
+          }
+        );
+        setVote("sucssful", response.data);
+        // console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+      
+    }else if(voteType !== "down" && voteType !== "up"){
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/vote/${userId}`,
+        {
+          deck_id: deckId,
+          voteType: "down",
+        }
+      );
+      setVote("sucssful", response.data);
+      // console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }}
+         else if(voteType === "down"){
+      try{
+        const response = await axios.delete(
+          `http://localhost:5000/vote/${userId}/${deckId}`
+        );
+        setVote("sucssful", response.data);
+        // console.log(response.data);
+      }  catch (error) {
+        console.error(error);
+      }
+    }
+    try{
+        const response = await axios.get(
+        `http://localhost:5000/deck/all/${userId}`
+      );
+      setDecks(response.data);
+      // console.log("decks", response.data);
+    
+    }  catch (error) {
+        console.error(error);
+      }
+
+  };
+
   return (
     <div>
       <div id="H-navbar">
@@ -182,34 +341,34 @@ function Home() {
         </div>
         <div className="H-raneem">
           <div className="profil-minisection">
-            <h3 className="profil-headline">Raneem Aljamal</h3>
+            <h3 className="profil-headline">{user.username}</h3>
             <hr className="hr1" />
             <div className="pro-info">
               <div className="profil-content">
                 <img className="img_dashboard" src={follo} alt="" />
                 <div className="">
-                  <Link to="/TeacherSuperAdmin">Followers</Link>
+                  <p>Followers</p>
                 </div>
               </div>
               <hr className="hr2" />
               <div className="profil-content">
                 <img className="img_dashboard" src={deck} alt="" />
                 <div className="">
-                  <Link to="/TeacherSuperAdmin">Posts</Link>
+                  <p>Posts</p>
                 </div>
               </div>
               <hr className="hr2" />
               <div className="profil-content">
                 <img className="img_dashboard" src={like} alt="" />
                 <div className="">
-                  <Link to="/TeacherSuperAdmin">Likes</Link>
+                  <p>Likes</p>
                 </div>
               </div>
               <hr className="hr2" />
               <div className="profil-content">
                 <img className="img_dashboard" src={cat} alt="" />
                 <div className="">
-                  <Link to="/TeacherSuperAdmin">Topics</Link>
+                  <p>Topics</p>
                 </div>
               </div>
               <hr className="hr2" />
@@ -266,37 +425,69 @@ function Home() {
             <div className="profil-and-posts">
               <div className="posts-section">
                 {filteredDecks.length === 0 ? (
-                  <div className="no-decks-message">
+                  <div className="no-decks-message" >
                     There are no decks here.
                   </div>
                 ) : (
-                  filteredDecks.map((deck) => (
-                    <div className="card-section" key={deck.id}>
+                  filteredDecks.map((deck,i) => (
+                    <div className="card-section" key={i}>
                       <Card
+                       key={deck.id}
                         sx={{
                           minWidth: 275,
                           width: 400,
-                          height: 150,
+                          height: 175,
                           boxShadow: "8px 8px 8px rgb(150, 150, 150)",
                         }}
                       >
-                        <CardContent>
-                       
-                          <Typography variant="h5" component="div">
+                        <CardContent key={deck.id}>
+                          <Typography style={{ color: "#2c6487" }} variant="h5" component="div" key={deck.id}>
                             {deck.name}
                           </Typography>
-                        
+                          <Typography variant="body2">{deck.level}</Typography>
+                          <Link className="cardLink" to={`/profil/${deck.user_id !== undefined ? deck.user_id.username : null}`}>
+                          <Typography variant="body2" >
+                            {deck.user_id !== undefined ? deck.user_id.username : null}
+                          </Typography>
+                          </Link>
                           <Typography variant="body2">
                             {deck.card_count} Cards
                           </Typography>
                         </CardContent>
                         <CardActions>
-                        <Link
-                       
-                        to={`/deck/${deck._id}`}
-                      >
-                          <Button size="small">Test your self</Button>
+                          <Link className="cardLink" to={`/deck/${deck._id}`}>
+                            <Button size="small">Test your self</Button>
                           </Link>
+                          <IconButton
+                            aria-label="like"
+                            onClick={(e) => handleThumbUpClick(e, deck._id, deck.voteType)}
+                          >
+                            <ThumbUpIcon
+                              style={{
+                                color:
+                                  deck.voteType === "up"
+                                    ? "#f4b31a"
+                                    : deck.voteType === "down"
+                                    ? "#2c6487"
+                                    : "rgb(44, 100, 135)",
+                              }}
+                            />
+                          </IconButton>
+                          <IconButton
+                            aria-label="like"
+                            onClick={(e) => handleThumbDownClick(e, deck._id, deck.voteType)}
+                          >
+                            <ThumbDownIcon
+                              style={{
+                                color:
+                                  deck.voteType === "down"
+                                    ? "#f4b31a"
+                                    : deck.voteType === "up"
+                                    ? "#2c6487"
+                                    : "rgb(44, 100, 135)",
+                              }}
+                            />
+                          </IconButton>
                         </CardActions>
                       </Card>
                     </div>

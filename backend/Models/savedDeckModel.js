@@ -8,13 +8,12 @@ const savedSchema = new Schema(
       ref: "User",
       required: [true, "Please include the user id"],
     },
-    deck_id: [
+    deck_id:
       {
         type: Schema.Types.ObjectId,
         ref: "Deck",
         required: [true, "Please include the deck id"],
       },
-    ],
     saved_date: {
       type: Date,
       default: Date.now

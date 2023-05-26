@@ -7,14 +7,21 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import axios from "axios";
 import { useParams } from "react-router";
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
 
 
 function Deck() {
+  const userId = sessionStorage.getItem("Id");
   const deckId = useParams();
   const [slideIndex, setSlideIndex] = useState(0);
   const [updateCount, setUpdateCount] = useState(0);
   const [cards, setCards] = useState([]);
   const [cardCount, setCardCount] = useState(0);
+  const [save ,setSave] = useState([]);
+  const [saved , setSaved] =useState([]);
+  const [showBookmarkBorder, setShowBookmarkBorder] = useState(true);
+  const [showBookmark, setShowBookmark] = useState(false);
 
   const settings = {
     className: "center",
@@ -59,7 +66,7 @@ function Deck() {
         const response = await axios.get(`http://localhost:5000/card/list/${deckId.deckId}`);
         setCards(response.data);
         setCardCount(response.data.length);
-        console.log(response.data)
+        // console.log(response.data)
       } catch (error) {
         console.log(error);
       }
@@ -74,6 +81,84 @@ function Deck() {
   };
 
   const sliderRef = useRef(null);
+   
+
+ const handelSavePost = async (e)=>{
+  // console.log(userId);
+  // console.log(deckId.deckId);
+  e.preventDefault();
+
+  try {
+    const response = await axios.post(
+      `http://localhost:5000/saved/save/${userId}`,
+      {
+        deck_id: deckId.deckId,
+    
+      }
+    );
+    setSave("sucssful", response.data);
+
+    setShowBookmark((current) => !current);
+    setShowBookmarkBorder((current) => !current);
+
+    // console.log(response.data);
+
+ } catch (error) {
+  console.error(error);
+}}
+
+
+const handelUnSavePost = async (e)=>{
+  // console.log(userId);
+  // console.log(deckId.deckId);
+  e.preventDefault();
+
+  try {
+    const response = await axios.post(
+      `http://localhost:5000/saved/unsave/${userId}`,
+      {
+        deck_id: deckId.deckId,
+    
+      }
+    );
+    setSave("sucssful", response.data);
+    setShowBookmark((current) => !current);
+    setShowBookmarkBorder((current) => !current);
+
+    // console.log(response.data);
+
+ } catch (error) {
+  console.error(error);
+}}
+
+useEffect(() => {
+
+  async function fetchData() {
+    // console.log(userId);
+    // console.log(deckId.deckId);
+
+    try {
+      const response = await axios.get(`http://localhost:5000/saved/list/${userId}`);
+      setSaved(response.data);
+      // console.log(response.data);
+
+        // Check if the saved item exists with the specified userId and deckId
+    const isItemSaved = saved.some(item => item.user_id === userId && item.deck_id._id === deckId.deckId);
+    console.log(saved)
+    console.log(isItemSaved)
+    setShowBookmarkBorder(!isItemSaved);
+    setShowBookmark(isItemSaved);
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  fetchData();
+}, []);
+
+
+
+
 
   return (
     <div>
@@ -85,6 +170,9 @@ function Deck() {
           <Sidebar />
         </div>
         <div id="H-content2">
+          <div><BookmarkBorderIcon style={{ color: "#2c6487", width: "2.5rem", height: "2.5rem", display: showBookmarkBorder ? "block" : "none" }} onClick={(e) => handelSavePost(e)}/>
+          <BookmarkIcon style={{ color: "#f4b31a", width: "2.5rem", height: "2.5rem", display: showBookmark ? "block" : "none" }} onClick={(e) => handelUnSavePost(e)} />
+          </div>
           <div className="slik">
             <Slider ref={sliderRef}  {...settings}>
               {cards.map((card, index) => (

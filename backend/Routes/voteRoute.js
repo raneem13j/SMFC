@@ -17,7 +17,7 @@ router.get('/:id', getVoteById);
 router.get('/list/:id', getAllVotesByDeckId)
 router.post('/:id', createVote);
 router.put('/:id', editVote);
-router.delete('/:id', deleteVote);
+router.delete('/:userId/:deckId', deleteVote);
 
 
 export default router;

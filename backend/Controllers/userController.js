@@ -14,6 +14,18 @@ export const getAllUsers = async (req, res) => {
   };
 
 
+// export const getUserByUserName = async(req, res) =>{
+
+//   try{
+//     const Username = req.params.username;
+//     const user = await User.find({ username: Username });
+//     res.status(200).json(users);
+//   }catch (err) {
+//     res.status(500).json({ error: err });
+//   }
+// };
+
+
 export const getUserById = async (req, res) => {
     try {
         const id = req.params.id;
