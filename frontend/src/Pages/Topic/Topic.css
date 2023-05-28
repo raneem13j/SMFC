@@ -1,0 +1,33 @@
+.topicHr{
+    background-color: #f4b31a;
+    width: 1450px;
+    margin: 5px auto;
+    height: 4px;
+}
+.addNewTopic{
+   display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  margin-left: 90px;
+  margin-right: 150px;
+  margin-bottom: 20px;
+}
+.userdet4{
+    color:#2c6487;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 8px 
+    
+}
+.topicdiv{
+    width: 900px;
+}
+.userButtonT{
+    padding: 5px;
+    margin: 5px;
+    color:#2c6487;
+    border:#f4b31a solid 2px;
+    border-radius: 12px;
+
+}
+

@@ -49,7 +49,7 @@ function Login() {
 
 
       if (data.role === "User") {
-        navigate("/");
+        navigate("/home");
       }
 
       console.log("Registration successful");
@@ -83,7 +83,7 @@ function Login() {
       const decodedToken = jwt_decode(data.token);
       console.log(decodedToken);
 
-      window.location.href = "/";
+      window.location.href = "/home";
       
       console.log("Login successful");
     } catch (error) {

@@ -7,6 +7,7 @@ import Deck from "./Pages/Deck/Deck";
 import Profil from "./Pages/MyProfil/Profil";
 import UserProfil from "./Pages/UsersProfil/UserProfil";
 import Post from "./Pages/MakePost/Post";
+import Topic from "./Pages/Topic/Topic";
 
 function App() {
   return (
@@ -14,13 +15,13 @@ function App() {
      <BrowserRouter>
         <div className="App">
               <Routes>
-                <Route path="/" element={<Home />} />
+                <Route path="/home" element={<Home />} />
                 <Route path="/deck/:deckId" element={<Deck />} />
-                <Route path="/login" element={<Login />} />
+                <Route path="/" element={<Login />} />
                 <Route path="/myprofil" element={<Profil />} />
                 <Route path="/profil/:Id" element={<UserProfil />} />
-                <Route path="/post/:Id" element={<Post />} />
-
+                <Route path="/post/:id" element={<Post />} />
+                <Route path="/topic" element={<Topic />} />
                 <Route path="*" element={<Notfound />} />
               </Routes>
         </div>

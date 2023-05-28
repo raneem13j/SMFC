@@ -15,6 +15,7 @@ import IconButton, { IconButtonProps } from "@mui/material/IconButton";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from '@mui/icons-material/Edit';
 
 function Profil() {
   const userId = sessionStorage.getItem("Id");
@@ -34,6 +35,9 @@ function Profil() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [ saveMode , setSaveMode] = useState(false);
+  const [ postMode , setPostMode] = useState(true);
+  const [ saved , setSaved] = useState([]);
 
   //fetching decks by user id
   useEffect(() => {
@@ -43,7 +47,7 @@ function Profil() {
           `http://localhost:5000/deck/byuser/${userId}`
         );
         setDecks(response.data);
-        // console.log("decks",response.data)
+        console.log("decks",response.data)
       } catch (error) {
         console.log(error);
       }
@@ -122,6 +126,10 @@ function Profil() {
         console.error(error);
       }
     }
+     if(saveMode === true){
+      handleListSaved();
+     }
+
   };
 
   // make down vote on deck
@@ -179,6 +187,10 @@ function Profil() {
         console.error(error);
       }
     }
+
+    if(saveMode === true){
+      handleListSaved();
+     }
   };
 
   //delete deck
@@ -241,8 +253,7 @@ function Profil() {
     setPopup(true);
     fetchFollowers();
   };
-
-  const fetchFollowers = async () => {
+ const fetchFollowers = async () => {
     try {
       const response = await axios.get(
         `http://localhost:5000/userfollower/followers/${userId}`
@@ -257,6 +268,7 @@ function Profil() {
   useEffect(() => {
     fetchFollowers();
   }, []);
+ 
 
   // fetch the following
 
@@ -330,6 +342,26 @@ function Profil() {
     } catch (error) {
       console.log(error);
     }
+
+  }
+
+  const handleListSaved = async()=>{
+       setSaveMode(true);
+       setPostMode(false);
+       try {
+        const response = await axios.get(
+          `http://localhost:5000/saved/list/${userId}`
+        );
+        setSaved(response.data);
+        console.log("decks", response.data);
+      } catch (error) {
+        console.log(error);
+      }
+  }
+
+  const handleListPost = async()=>{
+     setSaveMode(false);
+     setPostMode(true);
 
   }
 
@@ -411,7 +443,7 @@ function Profil() {
                   </PopupProfil>
                 </div>
                 <div className="btn2">
-                  <Link className="cardLink" to={`/post/${userId}`} >
+                  <Link className="cardLink" to={`/post/${userId}?edit=false`} >
                   <button className="userButton">Add Post</button>
                   </Link>
                   <button
@@ -464,9 +496,10 @@ function Profil() {
           </div>
           <hr />
           <div className="infoProfil1">
-            <button className="userButton">Posts</button>
-            <button className="userButton">Saved</button>
+            <button className="userButton" onClick={handleListPost}>Posts</button>
+            <button className="userButton" onClick={handleListSaved}>Saved</button>
           </div>
+          {postMode && (
           <div className="posts-section2">
             {decks.map((deck) => (
               <div className="card-section" key={deck.id}>
@@ -539,11 +572,84 @@ function Profil() {
                     <IconButton onClick={(e) => handleDeleteDeck(e, deck._id)}>
                       <DeleteIcon className="delete-icon" />
                     </IconButton>
+                    <IconButton style={{ marginLeft: "70px" }}>
+                        <Link className="cardLink" to={`/post/${deck._id}?edit=true`}>
+                            <EditIcon style={{ color: "#2c6487"}}/>
+                          </Link>
+                    </IconButton>
                   </CardActions>
                 </Card>
               </div>
             ))}
           </div>
+          )}
+          {saveMode && (
+          <div className="posts-section2">
+            {saved.map((deck) => (
+              <div className="card-section" key={deck.id}>
+                 <Card
+                       key={deck.id}
+                        sx={{
+                          minWidth: 275,
+                          width: 400,
+                          height: 175,
+                          boxShadow: "8px 8px 8px rgb(150, 150, 150)",
+                        }}
+                      >
+                        <CardContent key={deck.id}>
+                          <Typography style={{ color: "#2c6487" }} variant="h5" component="div" key={deck.id}>
+                            {deck.name}
+                          </Typography>
+                          <Typography variant="body2">{deck.level}</Typography>
+                          <Link className="cardLink" to={`/profil/${deck.user_id !== undefined ? deck.user_id.username : null}`}>
+                          <Typography variant="body2" >
+                             {deck.user_id !== undefined ? deck.user_id.username : null}
+                          </Typography>
+                          </Link>
+                          <Typography variant="body2">
+                            {deck.card_count} Cards
+                          </Typography>
+                        </CardContent>
+                        <CardActions>
+                          <Link className="cardLink" to={`/deck/${deck._id}`}>
+                            <Button size="small">Test your self</Button>
+                          </Link>
+                          <IconButton
+                            aria-label="like"
+                            onClick={(e) => handleThumbUpClick(e, deck._id, deck.voteType)}
+                          >
+                            <ThumbUpIcon
+                              style={{
+                                color:
+                                  deck.voteType === "up"
+                                    ? "#f4b31a"
+                                    : deck.voteType === "down"
+                                    ? "#2c6487"
+                                    : "rgb(44, 100, 135)",
+                              }}
+                            />
+                          </IconButton>
+                          <IconButton
+                            aria-label="like"
+                            onClick={(e) => handleThumbDownClick(e, deck._id, deck.voteType)}
+                          >
+                            <ThumbDownIcon
+                              style={{
+                                color:
+                                  deck.voteType === "down"
+                                    ? "#f4b31a"
+                                    : deck.voteType === "up"
+                                    ? "#2c6487"
+                                    : "rgb(44, 100, 135)",
+                              }}
+                            />
+                          </IconButton>
+                        </CardActions>
+                      </Card>
+              </div>
+            ))}
+          </div>
+          )}
         </div>
       </div>
     </div>

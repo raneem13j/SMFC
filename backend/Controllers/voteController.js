@@ -130,6 +130,45 @@ export const deleteVote = async (req, res) => {
 // }
 
 
+// export const getAllDecksOrder = async (req, res) => {
+//   try {
+//     const result = await Vote.aggregate([
+//       {
+//         $match: { voteType: "up" }
+//       },
+//       {
+//         $group: {
+//           _id: "$deck_id",
+//           totalUps: { $sum: { $cond: [ { $eq: [ "$voteType", "up" ] }, 1, 0 ] } },
+//           deck: { $first: "$deck_id" } // add deck_id field for $lookup
+//         }
+//       },
+//       {
+//         $lookup: {
+//           from: "decks",
+//           localField: "deck",
+//           foreignField: "_id",
+//           as: "deck"
+//         }
+//       },
+//       {
+//         $unwind: "$deck"
+//       },
+//       {
+//         $sort: { totalUps: -1 }
+//       }
+//     ]);
+
+//     // result contains the list of decks sorted by the number of "up" votes
+//     res.status(200).json(result);
+//     console.log(result);
+//   } catch (error) {
+//     // handle errors
+//     console.error(error);
+//     res.status(500).json({ error });
+//   }
+// };
+
 export const getAllDecksOrder = async (req, res) => {
   try {
     const result = await Vote.aggregate([
@@ -159,9 +198,26 @@ export const getAllDecksOrder = async (req, res) => {
       }
     ]);
 
-    // result contains the list of decks sorted by the number of "up" votes
-    res.status(200).json(result);
-    console.log(result);
+    // Fetch vote information for each deck
+    const decksWithVotes = await Promise.all(
+      result.map(async (item) => {
+        const vote = await Vote.findOne({
+          deck_id: item._id
+        });
+
+        // Add vote information to the deck object
+        const deckWithVote = {
+          ...item.deck,
+          voteType: vote ? vote.voteType : null,
+          totalUps: item.totalUps
+        };
+
+        return deckWithVote;
+      })
+    );
+
+    res.status(200).json(decksWithVotes);
+    console.log(decksWithVotes);
   } catch (error) {
     // handle errors
     console.error(error);

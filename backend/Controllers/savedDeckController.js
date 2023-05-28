@@ -1,4 +1,5 @@
 import Saved from "../Models/savedDeckModel.js";
+import Vote from "../Models/voteModel.js";
 
 export const getAllSaveds = async (req, res) => {
   try {
@@ -18,13 +19,35 @@ export const getAllSavedDecksByUser = async (req, res) => {
     const userId = req.params.id;
 
     const savedDecks = await Saved.find({ user_id: userId })
-    .populate('deck_id');
+    .populate({
+      path: 'deck_id',
+      select: 'name level card_count user_id',
+      populate: {
+        path: 'user_id',
+        select: 'username',
+      },
+    });
 
-    if (!savedDecks) {
-      return res.status(404).json({ message: "no decks found" });
-    }
 
-    res.status(200).json(savedDecks);
+    const decksWithVotes = await Promise.all(
+      savedDecks.map(async (savedDeck) => {
+        const vote = await Vote.findOne({
+          user_id: userId,
+          deck_id: savedDeck.deck_id._id,
+        });
+
+        // Add vote information to the deck object
+        const deckWithVote = {
+          ...savedDeck.deck_id._doc,
+          voteType: vote ? vote.voteType : null,
+        };
+
+        return deckWithVote;
+      })
+    );
+
+    res.status(200).json(decksWithVotes);
+
   } catch (err) {
     res.status(500).json({ error: err });
   }

@@ -21,17 +21,17 @@ const deckSchema = new Schema({
   category_id: {
     type: Schema.Types.ObjectId,
     ref: "Category",
-    required: [true, "Please include the product category"],
+    // required: [true, "Please include the product category"],
   },
   subcategory_id: {
     type: Schema.Types.ObjectId,
     ref: "Subcategory",
-    required: [true, "Please include the product subcategory"],
+    // required: [true, "Please include the product subcategory"],
   },
   topic_id: {
     type: Schema.Types.ObjectId,
     ref: "Topic",
-    required: [true, "Please include the product topic"],
+    // required: [true, "Please include the product topic"],
   },
  
 }, { timestamps: true });

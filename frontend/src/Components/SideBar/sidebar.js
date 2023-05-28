@@ -18,7 +18,7 @@ function Sidebar() {
             <div className="dashboard_main">
               <div className="dashboard">
                 <div className="text">
-                  <Link to="/">Home</Link>
+                  <Link to="/home">Home</Link>
                 </div>
               </div>
             </div>
@@ -39,7 +39,7 @@ function Sidebar() {
             <div className="dashboard_main">
               <div className="dashboard">
                 <div className="text" onClick={authenticated && handleLogout}>
-                  <Link to="/login">Logout</Link>
+                  <Link to="/">Logout</Link>
                 </div>
               </div>
             </div>

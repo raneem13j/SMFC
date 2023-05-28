@@ -66,13 +66,13 @@ function Deck() {
         const response = await axios.get(`http://localhost:5000/card/list/${deckId.deckId}`);
         setCards(response.data);
         setCardCount(response.data.length);
-        // console.log(response.data)
+        console.log(response.data)
       } catch (error) {
         console.log(error);
       }
     }
     fetchData();
-  }, []);
+  }, [deckId]);
 
   const handleSliderChange = (e) => {
     const newIndex = parseInt(e.target.value);
@@ -101,7 +101,7 @@ function Deck() {
     setShowBookmark((current) => !current);
     setShowBookmarkBorder((current) => !current);
 
-    // console.log(response.data);
+    console.log(response.data);
 
  } catch (error) {
   console.error(error);
@@ -125,7 +125,7 @@ const handelUnSavePost = async (e)=>{
     setShowBookmark((current) => !current);
     setShowBookmarkBorder((current) => !current);
 
-    // console.log(response.data);
+    console.log(response.data);
 
  } catch (error) {
   console.error(error);
@@ -140,11 +140,10 @@ useEffect(() => {
     try {
       const response = await axios.get(`http://localhost:5000/saved/list/${userId}`);
       setSaved(response.data);
-      // console.log(response.data);
+      console.log(response.data);
 
         // Check if the saved item exists with the specified userId and deckId
-    const isItemSaved = saved.some(item => item.user_id === userId && item.deck_id._id === deckId.deckId);
-    console.log(saved)
+    const isItemSaved = response.data.some(item => item.user_id === userId && item.deck_id._id === deckId.deckId);
     console.log(isItemSaved)
     setShowBookmarkBorder(!isItemSaved);
     setShowBookmark(isItemSaved);

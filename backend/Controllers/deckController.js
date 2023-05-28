@@ -69,6 +69,41 @@ export const getDecksByUserId = async (req, res)=>{
 }
 }
 
+export const getDecksByUserIdforProfil = async (req, res)=>{
+  const userId = req.params.id;
+  const user_id = req.query.user_id;
+  try{
+   const deck = await Deck.find({
+     user_id: userId
+   }).populate("topic_id", "topic")
+   .populate("category_id", "category")
+   .populate("subcategory_id", "subcategory")
+   .populate("user_id", "username");
+    // Fetch vote information for each deck
+    const decksWithVotes = await Promise.all(
+     deck.map(async (deck) => {
+       const vote = await Vote.findOne({
+         user_id: user_id,
+         deck_id: deck._id,
+       });
+
+       // Add vote information to the deck object
+       const deckWithVote = {
+         ...deck._doc,
+         voteType: vote ? vote.voteType : null,
+       };
+
+       return deckWithVote;
+     })
+   );
+
+   res.status(200).json(decksWithVotes);
+  }catch (error) {
+   console.error(error);
+   res.status(500).send(error);
+}
+}
+
 export const getAllDecksByUserId = async (req, res) =>{
      const userId = req.params.id;
   try {
@@ -101,6 +136,39 @@ export const getAllDecksByUserId = async (req, res) =>{
   }
 }
 
+export const getAllDeckslatest = async (req, res) =>{
+  const userId = req.params.id;
+try {
+ const decks = await Deck.find()
+ .populate("topic_id", "topic")
+ .populate("category_id", "category")
+ .populate("subcategory_id", "subcategory")
+ .populate("user_id", "username")
+ .sort({ createdAt: -1 }); // Sort by date in descending order
+   // Fetch vote information for each deck
+   const decksWithVotes = await Promise.all(
+     decks.map(async (deck) => {
+       const vote = await Vote.findOne({
+         user_id: userId,
+         deck_id: deck._id,
+       });
+
+       // Add vote information to the deck object
+       const deckWithVote = {
+         ...deck._doc,
+         voteType: vote ? vote.voteType : null,
+       };
+
+       return deckWithVote;
+     })
+   );
+
+   res.status(200).json(decksWithVotes);
+} catch (err) {
+ res.status(500).json({ error: err });
+}
+}
+
 export const createDeck = async (req, res) => {
   try {
      const userId = req.params.id;
@@ -130,13 +198,14 @@ export const editDeck = async (req, res) => {
       const id = req.params.id;
       const updateFields = {};
       
-      if (req.body.name) updateFields.name = req.body.name;
-      if (req.body.level) updateFields.level = req.body.level;
-      if (req.body.card_count) updateFields.card_count = req.body.card_count;
-      if (req.body.category_id) updateFields.category_id = req.body.category_id;
-      if (req.body.subcategory_id) updateFields.subcategory_id = req.body.subcategory_id;
-      if (req.body.topic_id) updateFields.topic_id = req.body.topic_id;
-      if (req.body.user_id) updateFields.user_id = req.body.user_id;
+    
+      if (req.body.name !== undefined) updateFields.name = req.body.name;
+      if (req.body.level !== undefined) updateFields.level = req.body.level;
+      if (req.body.card_count !== undefined) updateFields.card_count = req.body.card_count;
+      if (req.body.category_id !== undefined) updateFields.category_id = req.body.category_id;
+      if (req.body.subcategory_id !== undefined) updateFields.subcategory_id = req.body.subcategory_id;
+      if (req.body.topic_id !== undefined) updateFields.topic_id = req.body.topic_id;
+      if (req.body.user_id !== undefined) updateFields.user_id = req.body.user_id;
     
       const deckDoc = await Deck.findByIdAndUpdate(id, {
         $set: updateFields,

@@ -12,11 +12,11 @@ import {
   editUser,
   deleteUser,
   updateRole,
-  // getUserByUserName
+  getUserByUserName
   } from "../Controllers/userController.js";
 
 router.get('/', getAllUsers);
-// router.get('/:username', getUserByUserName);
+router.get('/user/:username', getUserByUserName);
 
 router.get('/:id', getUserById);
 router.post('/logout',logout)

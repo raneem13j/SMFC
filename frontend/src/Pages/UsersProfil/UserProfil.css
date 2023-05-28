@@ -1,0 +1,13 @@
+.userProfil3{
+     display: flex;
+     justify-content: space-around;
+     align-items: center;
+}
+.userdet5{
+    color:#2c6487;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 8px ;
+    text-align: center;
+    
+}
