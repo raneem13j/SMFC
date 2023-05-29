@@ -4,7 +4,7 @@ import "./home.css";
 import Navbar from "../../Components/NavBar/navbar";
 import Sidebar from "../../Components/SideBar/sidebar";
 import { Link } from "react-router-dom";
-import follo from "../../Images/icons8-users-48.png";
+import follo from "../../Images/icons8-new-48.png";
 import like from "../../Images/icons8-like-50.png";
 import deck from "../../Images/icons8-card-30.png";
 import cat from "../../Images/icons8-categorize-52.png";
@@ -16,6 +16,7 @@ import Typography from "@mui/material/Typography";
 import IconButton, { IconButtonProps } from "@mui/material/IconButton";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 function Home() {
   const userId = sessionStorage.getItem("Id");
@@ -33,7 +34,7 @@ function Home() {
   const [latest, setLatest] = useState([]);
   const [order, setOrder] = useState([]);
   const [latestMode, setLatestMode] = useState(false);
-  const [orderMode, setOrderMode] = useState(true);
+  const [orderMode, setOrderMode] = useState(false);
   const [postMode, setPostMode] = useState(true);
 
   useEffect(() => {
@@ -103,35 +104,7 @@ function Home() {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await axios.get(
-          `http://localhost:5000/deck/latest/${userId}`
-        );
-        setLatest(response.data);
-        // console.log("decks", response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData();
-  }, []);
 
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     try {
-  //       const response = await axios.get(
-  //         `http://localhost:5000/vote/order`
-  //       );
-  //       setOrder(response.data);
-  //       // console.log("decks", response.data);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   }
-  //   fetchData();
-  // }, []);
 
   useEffect(() => {
     if (selectedSubcategory || selectedCategory || selectedTopic) {
@@ -359,6 +332,45 @@ function Home() {
     }
   };
 
+
+  const handleListPost = async()=>{
+    setLatestMode(false);
+    setOrderMode(false);
+    setPostMode(true);
+ }
+
+ const handleListLatest  = async() =>{
+    setLatestMode(true);
+    setOrderMode(false);
+    setPostMode(false);
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/deck/latest/${userId}`
+      );
+      setLatest(response.data);
+      // console.log("decks", response.data);
+    } catch (error) {
+      console.log(error);
+    }
+
+ }
+
+ const handleListOrder = async() =>{
+     setLatestMode(false);
+     setOrderMode(true);
+     setPostMode(false);
+     try {
+      const response = await axios.get(
+        `http://localhost:5000/vote/order`
+      );
+      setOrder(response.data);
+      // console.log("decks", response.data);
+    } catch (error) {
+      console.log(error);
+    }
+ }
+
+
   return (
     <div>
       <div id="H-navbar">
@@ -374,33 +386,27 @@ function Home() {
             <hr className="hr1" />
             <div className="pro-info">
               <div className="profil-content">
-                <img className="img_dashboard" src={follo} alt="" />
+              <img className="img_dashboard" src={follo} alt="" />
                 <div className="">
-                  <p>Followers</p>
+                  <button onClick={handleListLatest}>The Latest</button>
                 </div>
               </div>
               <hr className="hr2" />
               <div className="profil-content">
                 <img className="img_dashboard" src={deck} alt="" />
                 <div className="">
-                  <p>Posts</p>
+                  <button onClick={handleListPost}>Posts</button>
                 </div>
               </div>
               <hr className="hr2" />
               <div className="profil-content">
                 <img className="img_dashboard" src={like} alt="" />
                 <div className="">
-                  <p>Likes</p>
+                  <button  onClick={handleListOrder}>Most Voted</button>
                 </div>
               </div>
               <hr className="hr2" />
-              <div className="profil-content">
-                <img className="img_dashboard" src={cat} alt="" />
-                <div className="">
-                  <p>Topics</p>
-                </div>
-              </div>
-              <hr className="hr2" />
+            
             </div>
           </div>
         </div>
@@ -411,7 +417,18 @@ function Home() {
               <div className="filter-section">
                 {/* a map of topics go here */}
                 <ul className="filter-list">
-                  <li className="li-filter">Topics:</li>
+                  <li className="li-filter">Topics: </li>
+                  <button
+                  className="clear-filters-button"
+                  onClick={() => {
+                    setSelectedTopic(null);
+                    setSelectedCategory(null);
+                    setSelectedSubcategory(null);
+                  }}
+                >
+                  All
+                </button>
+
                   {topicOptions}
                 </ul>
               </div>
@@ -429,18 +446,6 @@ function Home() {
                   {subcategoryOptions}
                 </ul>
               </div>
-              {hasFilters && (
-                <button
-                  className="clear-filters-button"
-                  onClick={() => {
-                    setSelectedTopic(null);
-                    setSelectedCategory(null);
-                    setSelectedSubcategory(null);
-                  }}
-                >
-                  All
-                </button>
-              )}
             </div>
 
             <div className="head">
@@ -465,9 +470,9 @@ function Home() {
                           key={deck.id}
                           sx={{
                             minWidth: 275,
-                            width: 400,
-                            height: 175,
-                            boxShadow: "8px 8px 8px rgb(150, 150, 150)",
+                            width: 800,
+                            height: 155,
+                            boxShadow: "6px 6px 6px rgb(150, 150, 150)",
                           }}
                         >
                           <CardContent key={deck.id}>
@@ -554,9 +559,10 @@ function Home() {
                         key={i}
                         sx={{
                           minWidth: 275,
-                          width: 400,
-                          height: 175,
-                          boxShadow: "8px 8px 8px rgb(150, 150, 150)",
+                          
+                            width: 800,
+                            height: 155,
+                            boxShadow: "6px 6px 6px rgb(150, 150, 150)",
                         }}
                       >
                         <CardContent key={deck.id}>
@@ -642,9 +648,9 @@ function Home() {
                         key={i}
                         sx={{
                           minWidth: 275,
-                          width: 400,
-                          height: 175,
-                          boxShadow: "8px 8px 8px rgb(150, 150, 150)",
+                            width: 800,
+                            height: 155,
+                            boxShadow: "6px 6px 6px rgb(150, 150, 150)",
                         }}
                       >
                         <CardContent key={deck.id}>
@@ -660,21 +666,21 @@ function Home() {
                           <Link
                             className="cardLink"
                             to={`/profil/${
-                              deck.user_id !== undefined
-                                ? deck.user_id.username
+                              deck.username !== undefined
+                                ? deck.username
                                 : null
                             }`}
                           >
                             <Typography variant="body2">
-                              {deck.user_id !== undefined
-                                ? deck.user_id.username
+                              {deck.username !== undefined
+                                ? deck.username
                                 : null}
                             </Typography>
                           </Link>
                           <Typography variant="body2">
                             {deck.card_count} Cards
                           </Typography>
-                        </CardContent>
+                     </CardContent>
                         <CardActions>
                           <Link className="cardLink" to={`/deck/${deck._id}`}>
                             <Button size="small">Test your self</Button>
@@ -713,6 +719,9 @@ function Home() {
                               }}
                             />
                           </IconButton>
+                          <Typography id="MLI" variant="body2">
+                            {deck.totalUps}<FavoriteIcon style={{color: "#2c6487"}}/>
+                          </Typography>
                         </CardActions>
                       </Card>
                     </div>
@@ -728,3 +737,6 @@ function Home() {
 }
 
 export default Home;
+
+
+

@@ -24,7 +24,7 @@ const Input = styled("input")(({ theme }) => ({
 const Listbox = styled("ul")(({ theme }) => ({
   width: 660,
   color: "#2c6487",
-  borderRadius: "0 0 15px 15px",
+  borderRadius: "0 0 10px 10px",
   marginLeft: 775,
   padding: 0,
   zIndex: 1,

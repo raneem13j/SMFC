@@ -81,3 +81,12 @@
     overflow-x:hidden;
 	
 }
+.toast.success {
+	background-color: #2c6487;
+	color: #ffffff;
+  }
+  
+  .toast.error {
+	background-color: #f4b31a;
+	color: #ffffff;
+  }

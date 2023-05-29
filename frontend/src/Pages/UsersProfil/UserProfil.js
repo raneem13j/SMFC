@@ -184,7 +184,7 @@ function UserProfil() {
   }, [follow, unFollow, userId]);
   
   const handleFollow = async ()=>{
-    console.log("me");
+    console.log("me", userId);
     
     try {
       const response = await axios.post(
@@ -194,8 +194,11 @@ function UserProfil() {
         }
       );
       setFollow("sucssful", response.data);
+      setIsFollowing(true);
+      console.log("setfollow ",response.data)
 
-      // console.log(response.data);
+
+      console.log(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -211,6 +214,10 @@ function UserProfil() {
         }
       );
       setUnFollow("sucssful", response.data);
+      setIsFollowing(false);
+
+
+      console.log("setunfollow ",response.data)
 
       // console.log(response.data);
     } catch (error) {
@@ -219,14 +226,14 @@ function UserProfil() {
   }
 
   const handleFollowState = async (e) =>{
-    
+     console.log(isFollowing)
     e.preventDefault();
      if(isFollowing === true){
        
       handleUnFollow();
      
 
-     }else if(isFollowing === false){
+     }else{
     
       handleFollow();
        
@@ -260,8 +267,8 @@ function UserProfil() {
                         sx={{
                           minWidth: 275,
                           width: 400,
-                          height: 175,
-                          boxShadow: "8px 8px 8px rgb(150, 150, 150)",
+                          height: 155,
+                          boxShadow: "6px 6px 6px rgb(150, 150, 150)",
                         }}
                       >
                         <CardContent key={deck.id}>

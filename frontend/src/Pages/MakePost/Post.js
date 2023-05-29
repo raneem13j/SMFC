@@ -5,6 +5,8 @@ import axios from "axios";
 import "./Post.css";
 import Navbar from "../../Components/NavBar/navbar";
 import Sidebar from "../../Components/SideBar/sidebar";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Post() {
   const location = useLocation();
@@ -14,6 +16,7 @@ function Post() {
   const deckId = useParams();
   const [topics, setTopics] = useState([]);
   const [categories, setCategories] = useState([]);
+  
   const [subcategories, setSubcategories] = useState([]);
   const [name, setName] = useState("");
   const [level, setLevel] = useState("");
@@ -88,69 +91,6 @@ function Post() {
     }
   }, [edit, deckId]);
 
-   
-  // const handleSubmit = async (event) => {
-  //   event.preventDefault();
-  //   // console.log("dd",(userId));
-  //   const formData = new FormData();
-  //   formData.append("name", name);
-  //   formData.append("level", level);
-  //   formData.append("card_count", cardCount);
-  //   formData.append("topic_id", topicId);
-  //   formData.append("category_id", categoryId);
-  //   formData.append("subcategory_id", subcategoryId);
-
-  //   const deckData = Object.fromEntries(formData);
-
-  //   try {
-  //     let deckResponse;
-  //     if (edit === 'true') {
-  //       deckResponse = await axios.put(
-  //         `http://localhost:5000/deck/${deckId.id}`,
-  //         deckData
-  //       );
-  //     } else {
-  //       deckResponse = await axios.post(
-  //         `http://localhost:5000/deck/${userId}`,
-  //         deckData
-  //       );
-  //     }
-  //     const deckID = deckResponse.data._id;
-  //     // console.log("id",(deckId))
-  //     const newCards = [];
-  //    for (let i = 1; i <= deckData.card_count; i++) {
-        
-  //       const formData = new FormData();
-  //       formData.append("deck_id", deckID);
-  //       formData.append("front", document.getElementById(`front${i}`).value);
-  //       formData.append("back", document.getElementById(`back${i}`).value);
-        
-  //       const cardData = Object.fromEntries(formData);
-
-
-  //       let cardResponse;
-  //       if (edit === 'true') {
-  //         const cardId = cards[i]._id; // Get the card ID from the cards state
-  //         cardResponse = await axios.put(
-  //           `http://localhost:5000/card/${cardId}`,
-  //           cardData
-  //         );
-  //       } else {
-  //         cardResponse = await axios.post(
-  //           "http://localhost:5000/card",
-  //           cardData
-  //         );
-  //       }
-  //       newCards.push(cardResponse.data);
-  //      console.log("Card created:", cardResponse.data);
-  //     }
-  //     setCards(newCards);
-  //     console.log("Deck created:", deckResponse.data);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -210,8 +150,14 @@ function Post() {
       }
       setCards(newCards);
       console.log("Deck created:", deckResponse.data);
+      toast.success("Post is created  successfully", {
+        className: "toast success",
+      });
     } catch (error) {
       console.log(error);
+      toast.error(" Something went wrong", {
+        className: "toast error",
+      });
     }
   };
 
@@ -357,7 +303,9 @@ function Post() {
 ))}
           </div>
         </div>
+        <ToastContainer/>
       </div>
+      
     </div>
   );
 }

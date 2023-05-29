@@ -1,4 +1,5 @@
 import Vote from "../Models/voteModel.js";
+import User from "../Models/userModel.js";
 import mongoose from 'mongoose';
 
 export const getAllVotes = async (req, res) => {
@@ -211,6 +212,10 @@ export const getAllDecksOrder = async (req, res) => {
           voteType: vote ? vote.voteType : null,
           totalUps: item.totalUps
         };
+
+          // Populate user_id to get the username
+          const user = await User.findById(deckWithVote.user_id);
+          deckWithVote.username = user ? user.username : null;
 
         return deckWithVote;
       })

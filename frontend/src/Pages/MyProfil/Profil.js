@@ -508,8 +508,8 @@ function Profil() {
                   sx={{
                     minWidth: 275,
                     width: 400,
-                    height: 175,
-                    boxShadow: "8px 8px 8px rgb(150, 150, 150)",
+                    height: 160,
+                    boxShadow: "6px 6px 6px rgb(150, 150, 150)",
                   }}
                 >
                   <CardContent key={deck.id}>
@@ -592,8 +592,8 @@ function Profil() {
                         sx={{
                           minWidth: 275,
                           width: 400,
-                          height: 175,
-                          boxShadow: "8px 8px 8px rgb(150, 150, 150)",
+                          height: 160,
+                          boxShadow: "6px 6px 6px rgb(150, 150, 150)",
                         }}
                       >
                         <CardContent key={deck.id}>
