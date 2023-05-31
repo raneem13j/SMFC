@@ -1,32 +1,42 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./navbar.css";
-import { Link } from "react-router-dom";
-import logo from "../../Images/Screenshot from 2023-05-09 16-57-12.png";
-import search from "./icons8-search-50.png"
+import "./search.css"
 import useAutocomplete from "@mui/base/useAutocomplete";
 import { styled } from "@mui/system";
+import { Link } from "react-router-dom";
+import search from "./icons8-search-50.png";
 
 const Input = styled("input")(({ theme }) => ({
   height: 40,
-  width: 700,
+  width: "700px",
   outline: "none",
   color: "#2c6487",
-  backgroundColor: "rgb(240, 240, 240)",
+  backgroundColor: "white",
   border: "none",
   borderRadius: 50,
   paddingLeft: 30,
   fontSize: 18,
-  marginTop: 12,
-  marginLeft: 750,
+  [theme.breakpoints.down("md")]: {
+    width: 350, 
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
+  "@media (max-width: 400px)": { // Added media query for screens smaller than 400px
+    width: "100%",
+    fontSize: 16,
+    paddingLeft: 20,
+    marginTop: 8,
+    marginBottom: 1,
+  },
+ 
 }));
 
 const Listbox = styled("ul")(({ theme }) => ({
-  width: 660,
+  width:"35%",
   color: "#2c6487",
   borderRadius: "0 0 10px 10px",
-  marginLeft: 775,
-  padding: 0,
+  marginLeft:25,
+  padding: 10,
   zIndex: 1,
   position: "absolute",
   listStyle: "none",
@@ -34,6 +44,19 @@ const Listbox = styled("ul")(({ theme }) => ({
   boxShadow: "8px 8px 20px rgb(128, 128, 128)",
   overflow: "auto",
   maxHeight: 250,
+
+  [theme.breakpoints.down("md")]: {
+    width: "50%", // Width for tablets and larger screens
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
+  "@media (max-width: 400px)": { // Added media query for screens smaller than 400px
+    width: "60%",
+    fontSize: 14,
+    maxHeight: 200,
+    marginLeft:10,
+    
+  },
   // border: "1px solid rgba(0,0,0,.25)",
   "& li.Mui-focused": {
     backgroundColor: "#2c6487",
@@ -46,8 +69,7 @@ const Listbox = styled("ul")(({ theme }) => ({
   },
 }));
 
-function Navbar() {
-  // const userId = sessionStorage.getItem("Id");
+function Search() {
   const [decks, setDecks] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -89,36 +111,39 @@ function Navbar() {
   });
 
   return (
-    <div className="navbar">
+    <>
+    <div className="loSearch">
+      
       <div>
-        <img src={logo} alt="#" className="navbar-logo" />
-      </div>
-      <div>
-        <div {...getRootProps()}>
-          <Input
+     <div {...getRootProps()}>
+     <Input
             {...getInputProps({
               onChange: (event) => setSearchTerm(event.target.value),
             })}
             placeholder="Search posts..."
           />
-         
         </div>
         {groupedOptions.length > 0 ? (
           <Listbox {...getListboxProps()}>
             {groupedOptions.map((option, index) => (
-              <Link className="cardLink" to={`/deck/${option._id}`}>
+              <Link className="loSearchLink" to={`/deck/${option._id}`}>
                 <li {...getOptionProps({ option, index })}>{option.name}</li>
               </Link>
             ))}
           </Listbox>
         ) : null}
-      </div>
-      <div>
-        <img src={search} alt="#" className="search-logo1" />
-      </div>
+      </div> 
+
       
+        <img src={search} alt="#" className="searchLogo"/>
+     
     </div>
+    </>
   );
 }
 
-export default Navbar;
+export default Search;
+
+
+
+

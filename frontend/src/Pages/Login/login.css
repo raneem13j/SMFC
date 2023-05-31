@@ -155,7 +155,7 @@
 
 /* For Responsiveness of the page */
 
-@media screen and (max-width: 650px) {
+@media screen and (max-width: 550px) {
 	.login-container {
 		height: 600px;
 		width: 300px;
@@ -211,7 +211,8 @@
 	}
 }
 
-@media screen and (max-width: 320px) {
+
+@media screen and (max-width: 450px){
 	.login-container {
 		height: 600px;
 		width: 250px;
@@ -240,7 +241,7 @@
 	}
 
 	.login-form-section {
-		height: 500px;
+		height: 400px;
 		width: 500px;
 	}
 
@@ -267,13 +268,3 @@
 	}
 }
 
-/* @media screen and (max-width: 412px){
-	.login-slider {
-		height: 50px;
-		width: 100px;
-		left: 45px;
-	}
-	.movelogin-slider {
-		left:145px;
-	}
-} */

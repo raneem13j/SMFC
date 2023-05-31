@@ -1,15 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./Deck.css";
-import Navbar from "../../Components/NavBar/navbar";
-import Sidebar from "../../Components/SideBar/sidebar";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import axios from "axios";
 import { useParams } from "react-router";
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
-
+import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
+import BookmarkIcon from "@mui/icons-material/Bookmark";
+import Lo from "../../Components/Test/Lo";
+import Search from "../../Components/Search/search";
 
 function Deck() {
   const userId = sessionStorage.getItem("Id");
@@ -18,10 +17,11 @@ function Deck() {
   const [updateCount, setUpdateCount] = useState(0);
   const [cards, setCards] = useState([]);
   const [cardCount, setCardCount] = useState(0);
-  const [save ,setSave] = useState([]);
-  const [saved , setSaved] =useState([]);
+  const [save, setSave] = useState([]);
+  const [saved, setSaved] = useState([]);
   const [showBookmarkBorder, setShowBookmarkBorder] = useState(true);
   const [showBookmark, setShowBookmark] = useState(false);
+  const [ deck, setDeck] = useState([]);
 
   const settings = {
     className: "center",
@@ -63,16 +63,31 @@ function Deck() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get(`http://localhost:5000/card/list/${deckId.deckId}`);
+        const response = await axios.get(
+          `http://localhost:5000/card/list/${deckId.deckId}`
+        );
         setCards(response.data);
         setCardCount(response.data.length);
-        console.log(response.data)
+        
       } catch (error) {
         console.log(error);
       }
     }
     fetchData();
   }, [deckId]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await axios.get(`http://localhost:5000/deck/${deckId.deckId}`);
+        setDeck(response.data);
+        // console.log(response.data)
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchData();
+  }, []);
 
   const handleSliderChange = (e) => {
     const newIndex = parseInt(e.target.value);
@@ -81,101 +96,113 @@ function Deck() {
   };
 
   const sliderRef = useRef(null);
-   
 
- const handelSavePost = async (e)=>{
-  // console.log(userId);
-  // console.log(deckId.deckId);
-  e.preventDefault();
-
-  try {
-    const response = await axios.post(
-      `http://localhost:5000/saved/save/${userId}`,
-      {
-        deck_id: deckId.deckId,
-    
-      }
-    );
-    setSave("sucssful", response.data);
-
-    setShowBookmark((current) => !current);
-    setShowBookmarkBorder((current) => !current);
-
-    console.log(response.data);
-
- } catch (error) {
-  console.error(error);
-}}
-
-
-const handelUnSavePost = async (e)=>{
-  // console.log(userId);
-  // console.log(deckId.deckId);
-  e.preventDefault();
-
-  try {
-    const response = await axios.post(
-      `http://localhost:5000/saved/unsave/${userId}`,
-      {
-        deck_id: deckId.deckId,
-    
-      }
-    );
-    setSave("sucssful", response.data);
-    setShowBookmark((current) => !current);
-    setShowBookmarkBorder((current) => !current);
-
-    console.log(response.data);
-
- } catch (error) {
-  console.error(error);
-}}
-
-useEffect(() => {
-
-  async function fetchData() {
+  const handelSavePost = async (e) => {
     // console.log(userId);
     // console.log(deckId.deckId);
+    e.preventDefault();
 
     try {
-      const response = await axios.get(`http://localhost:5000/saved/list/${userId}`);
-      setSaved(response.data);
-      console.log(response.data);
+      const response = await axios.post(
+        `http://localhost:5000/saved/save/${userId}`,
+        {
+          deck_id: deckId.deckId,
+        }
+      );
+      setSave("sucssful", response.data);
+
+      setShowBookmark((current) => !current);
+      setShowBookmarkBorder((current) => !current);
+
+      // console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handelUnSavePost = async (e) => {
+    // console.log(userId);
+    // console.log(deckId.deckId);
+    e.preventDefault();
+
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/saved/unsave/${userId}`,
+        {
+          deck_id: deckId.deckId,
+        }
+      );
+      setSave("sucssful", response.data);
+      setShowBookmark((current) => !current);
+      setShowBookmarkBorder((current) => !current);
+
+      // console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    async function fetchData() {
+      // console.log(userId);
+      // console.log(deckId.deckId);
+
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/saved/list/${userId}`
+        );
+        setSaved(response.data);
+        // console.log(response.data);
 
         // Check if the saved item exists with the specified userId and deckId
-    const isItemSaved = response.data.some(item => item.user_id === userId && item.deck_id._id === deckId.deckId);
-    console.log(isItemSaved)
-    setShowBookmarkBorder(!isItemSaved);
-    setShowBookmark(isItemSaved);
-
-    } catch (error) {
-      console.log(error);
+        const isItemSaved = response.data.some(
+          (item) =>
+            item.user_id === userId && item.deck_id._id === deckId.deckId
+        );
+        // console.log(isItemSaved);
+        setShowBookmarkBorder(!isItemSaved);
+        setShowBookmark(isItemSaved);
+      } catch (error) {
+        console.log(error);
+      }
     }
-  }
-  fetchData();
-}, []);
-
-
-
-
+    fetchData();
+  }, []);
 
   return (
-    <div>
-      <div id="H-navbar">
-        <Navbar />
-      </div>
-      <div id="H-wrapper">
-        <div id="H-sidebar">
-          <Sidebar />
-        </div>
-        <div id="H-content2">
-          <div><BookmarkBorderIcon style={{ color: "#2c6487", width: "2.5rem", height: "2.5rem", display: showBookmarkBorder ? "block" : "none" }} onClick={(e) => handelSavePost(e)}/>
-          <BookmarkIcon style={{ color: "#f4b31a", width: "2.5rem", height: "2.5rem", display: showBookmark ? "block" : "none" }} onClick={(e) => handelUnSavePost(e)} />
+    <>
+      <Lo />
+      <div className="deckPage">
+        <Search />
+        <div className="deckSection">
+          <div><p className="dectName">{deck.name}</p></div>
+          <div>
+             <BookmarkBorderIcon
+               id="bookmark-icon"
+              style={{
+                color: "#2c6487",
+                width: "2.5rem",
+                height: "2.5rem",
+                display: showBookmarkBorder ? "block" : "none",
+              }}
+              onClick={(e) => handelSavePost(e)}
+            />
+            <BookmarkIcon
+              id="bookmark-icon"
+              style={{
+                color: "#f4b31a",
+                width: "2.5rem",
+                height: "2.5rem",
+                display: showBookmark ? "block" : "none",
+              }}
+              onClick={(e) => handelUnSavePost(e)}
+            />
+             
           </div>
           <div className="slik">
-            <Slider ref={sliderRef}  {...settings}>
+            <Slider ref={sliderRef} {...settings}>
               {cards.map((card, index) => (
-                <div className="card-section" key={index}>
+                <div className="cardSection" key={index}>
                   <div className="card-main">
                     <div className="card-front">
                       <p>{card.front}</p>
@@ -189,14 +216,14 @@ useEffect(() => {
             </Slider>
           </div>
           <input
-          style={{
-            width: '850px',
-            height: '10px',
-            appearance: 'none',
-            outline: 'none',
-            borderRadius: '5px',
-            background: '#f4b31a'
-          }}
+            style={{
+              width: "55%",
+              height: "10px",
+              appearance: "none",
+              outline: "none",
+              borderRadius: "5px",
+              background: "#f4b31a",
+            }}
             className="progres-bar"
             onChange={handleSliderChange}
             value={slideIndex}
@@ -204,14 +231,14 @@ useEffect(() => {
             min={0}
             max={cardCount - 1}
           />
-          <div className="card-count">{slideIndex + 1}/{cardCount}</div>
+          <div className="cardCount">
+            {slideIndex + 1}/{cardCount}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
 export default Deck;
-
-
 

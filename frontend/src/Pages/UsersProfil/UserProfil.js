@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import axios from "axios";
 import "./UserProfil.css";
-import Navbar from "../../Components/NavBar/navbar";
-import Sidebar from "../../Components/SideBar/sidebar";
 import { Link } from "react-router-dom";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
@@ -13,6 +11,8 @@ import Typography from "@mui/material/Typography";
 import IconButton, { IconButtonProps } from "@mui/material/IconButton";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import Lo from "../../Components/Test/Lo";
+import Search from "../../Components/Search/search";
 
 function UserProfil() {
   const userID = sessionStorage.getItem("Id");
@@ -20,23 +20,26 @@ function UserProfil() {
   const userName = useParams();
   // console.log("ee", userName.Id);
   const [user, setUser] = useState({});
-  const [userId ,setUserId] = useState({});
+  const [userId, setUserId] = useState({});
   const [decks, setDecks] = useState([]);
   const [vote, setVote] = useState([]);
-  const [isFollowing , setIsFollowing] = useState("");
+  const [isFollowing, setIsFollowing] = useState("");
   const [unFollow, setUnFollow] = useState([]);
   const [follow, setFollow] = useState([]);
-
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get(`http://localhost:5000/user/user/${userName.Id}`);
+        const response = await axios.get(
+          `http://localhost:5000/user/user/${userName.Id}`
+        );
         setUser(response.data);
         const fetchedUserId = response.data._id;
         setUserId(fetchedUserId);
-  
-        const deckResponse = await axios.get(`http://localhost:5000/deck/byuser1/${fetchedUserId}?user_id=${userID}`);
+
+        const deckResponse = await axios.get(
+          `http://localhost:5000/deck/byuser1/${fetchedUserId}?user_id=${userID}`
+        );
         setDecks(deckResponse.data);
 
         // console.log(deckResponse.data)
@@ -44,7 +47,7 @@ function UserProfil() {
         console.log(error);
       }
     }
-  
+
     fetchData();
   }, [vote]);
 
@@ -141,7 +144,7 @@ function UserProfil() {
           `http://localhost:5000/vote/${userID}`,
           {
             deck_id: deckId,
-            voteType: "down"
+            voteType: "down",
           }
         );
         setVote("sucssful", response.data);
@@ -162,19 +165,21 @@ function UserProfil() {
     }
   };
 
-  // follow unfollow functionalty 
+  // follow unfollow functionalty
 
   const fetchFollowers = async () => {
-    console.log(userId);
+    // console.log(userId);
     try {
       const response = await axios.get(
         `http://localhost:5000/userfollower/following/${userID}`
       );
       const followers = response.data;
-       setIsFollowing(response.data.some((follower) => follower.following._id === userId));
-  
+      setIsFollowing(
+        response.data.some((follower) => follower.following._id === userId)
+      );
+
       // console.log("Followers:", followers);
-      console.log("dd",isFollowing)
+      // console.log("dd", isFollowing);
     } catch (error) {
       console.log(error);
     }
@@ -182,10 +187,10 @@ function UserProfil() {
   useEffect(() => {
     fetchFollowers();
   }, [follow, unFollow, userId]);
-  
-  const handleFollow = async ()=>{
-    console.log("me", userId);
-    
+
+  const handleFollow = async () => {
+    // console.log("me", userId);
+
     try {
       const response = await axios.post(
         `http://localhost:5000/userfollower/follow/${userId}`,
@@ -195,17 +200,15 @@ function UserProfil() {
       );
       setFollow("sucssful", response.data);
       setIsFollowing(true);
-      console.log("setfollow ",response.data)
+      // console.log("setfollow ", response.data);
 
-
-      console.log(response.data);
+      // console.log(response.data);
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
-  const handleUnFollow = async ()=>{
-   
+  const handleUnFollow = async () => {
     try {
       const response = await axios.post(
         `http://localhost:5000/userfollower/unfollow/${userId}`,
@@ -216,121 +219,134 @@ function UserProfil() {
       setUnFollow("sucssful", response.data);
       setIsFollowing(false);
 
-
-      console.log("setunfollow ",response.data)
+      // console.log("setunfollow ", response.data);
 
       // console.log(response.data);
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
-  const handleFollowState = async (e) =>{
-     console.log(isFollowing)
+  const handleFollowState = async (e) => {
+    // console.log(isFollowing);
     e.preventDefault();
-     if(isFollowing === true){
-       
+    if (isFollowing === true) {
       handleUnFollow();
-     
-
-     }else{
-    
+    } else {
       handleFollow();
-       
-     }
-  }
+    }
+  };
 
   return (
-    <div>
-      <div id="H-navbar">
-        <Navbar />
-      </div>
-      <div id="H-wrapper">
-        <div id="H-sidebar">
-          <Sidebar />
-        </div>
-        <div id="H-content">
+    <>
+      <Lo />
+      <div className="userProfilPage">
+        <Search />
+        <div>
           <div className="userProfil3">
             <p className="userdet4">{user.username}</p>
-            <button className="userButton" onClick={(e) =>handleFollowState(e)}>{isFollowing ? 'Following' : 'Follow'}</button>
-            
+            <button
+              className="myProfilButton"
+              onClick={(e) => handleFollowState(e)}
+            >
+              {isFollowing ? "Following" : "Follow"}
+            </button>
           </div>
-          <hr className="topicHr" />
+          <hr className="userProfilHr" />
           <div>
             <p className="userdet5">Posts</p>
             <div>
-            <div className="posts-section2">
-            {decks.map((deck) => (
-              <div className="card-section" key={deck.id}>
-                 <Card
-                       key={deck.id}
-                        sx={{
-                          minWidth: 275,
-                          width: 400,
-                          height: 155,
-                          boxShadow: "6px 6px 6px rgb(150, 150, 150)",
-                        }}
-                      >
-                        <CardContent key={deck.id}>
-                          <Typography style={{ color: "#2c6487" }} variant="h5" component="div" key={deck.id}>
-                            {deck.name}
-                          </Typography>
-                          <Typography variant="body2">{deck.level}</Typography>
-                          <Link className="cardLink" to={`/profil/${deck.user_id !== undefined ? deck.user_id.username : null}`}>
-                          <Typography variant="body2" >
-                             {deck.user_id !== undefined ? deck.user_id.username : null}
-                          </Typography>
-                          </Link>
+              <div className="userProfilCard">
+                {decks.map((deck) => (
+                  <div className="card-section" key={deck._id}>
+                    <Card
+                     id="userProfilC"
+                      key={deck._id}
+                      sx={{
+                        minWidth: 275,
+                        width: 400,
+                        height: 155,
+                        boxShadow: "6px 6px 6px rgb(150, 150, 150)",
+                      }}
+                    >
+                      <CardContent key={deck._id}>
+                        <Typography
+                          style={{ color: "#2c6487" }}
+                          variant="h5"
+                          component="div"
+                          key={deck.id}
+                        >
+                          {deck.name}
+                        </Typography>
+                        <Typography variant="body2">{deck.level}</Typography>
+                        <Link
+                          className="cardLink"
+                          to={`/profil/${
+                            deck.user_id !== undefined
+                              ? deck.user_id.username
+                              : null
+                          }`}
+                        >
                           <Typography variant="body2">
-                            {deck.card_count} Cards
+                            {deck.user_id !== undefined
+                              ? deck.user_id.username
+                              : null}
                           </Typography>
-                        </CardContent>
-                        <CardActions>
-                          <Link className="cardLink" to={`/deck/${deck._id}`}>
-                            <Button size="small">Test your self</Button>
-                          </Link>
-                          <IconButton
-                            aria-label="like"
-                            onClick={(e) => handleThumbUpClick(e, deck._id, deck.voteType)}
-                          >
-                            <ThumbUpIcon
-                              style={{
-                                color:
-                                  deck.voteType === "up"
-                                    ? "#f4b31a"
-                                    : deck.voteType === "down"
-                                    ? "#2c6487"
-                                    : "rgb(44, 100, 135)",
-                              }}
-                            />
-                          </IconButton>
-                          <IconButton
-                            aria-label="like"
-                            onClick={(e) => handleThumbDownClick(e, deck._id, deck.voteType)}
-                          >
-                            <ThumbDownIcon
-                              style={{
-                                color:
-                                  deck.voteType === "down"
-                                    ? "#f4b31a"
-                                    : deck.voteType === "up"
-                                    ? "#2c6487"
-                                    : "rgb(44, 100, 135)",
-                              }}
-                            />
-                          </IconButton>
-                        </CardActions>
-                      </Card>
+                        </Link>
+                        <Typography variant="body2">
+                          {deck.card_count} Cards
+                        </Typography>
+                      </CardContent>
+                      <CardActions>
+                        <Link className="cardLink" to={`/deck/${deck._id}`}>
+                          <Button size="small">Test your self</Button>
+                        </Link>
+                        <IconButton
+                          aria-label="like"
+                          onClick={(e) =>
+                            handleThumbUpClick(e, deck._id, deck.voteType)
+                          }
+                        >
+                          <ThumbUpIcon
+                            style={{
+                              color:
+                                deck.voteType === "up"
+                                  ? "#f4b31a"
+                                  : deck.voteType === "down"
+                                  ? "#2c6487"
+                                  : "rgb(44, 100, 135)",
+                            }}
+                          />
+                        </IconButton>
+                        <IconButton
+                          aria-label="like"
+                          onClick={(e) =>
+                            handleThumbDownClick(e, deck._id, deck.voteType)
+                          }
+                        >
+                          <ThumbDownIcon
+                            style={{
+                              color:
+                                deck.voteType === "down"
+                                  ? "#f4b31a"
+                                  : deck.voteType === "up"
+                                  ? "#2c6487"
+                                  : "rgb(44, 100, 135)",
+                            }}
+                          />
+                        </IconButton>
+                      </CardActions>
+                    </Card>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
 export default UserProfil;
+

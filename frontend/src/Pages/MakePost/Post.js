@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 import { useParams } from "react-router";
 import axios from "axios";
 import "./Post.css";
-import Navbar from "../../Components/NavBar/navbar";
-import Sidebar from "../../Components/SideBar/sidebar";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Lo from "../../Components/Test/Lo";
+import Search from "../../Components/Search/search";
 
 function Post() {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
-  const edit = params.get('edit');
+  const edit = params.get("edit");
   const userId = sessionStorage.getItem("Id");
   const deckId = useParams();
   const [topics, setTopics] = useState([]);
   const [categories, setCategories] = useState([]);
-  
+
   const [subcategories, setSubcategories] = useState([]);
   const [name, setName] = useState("");
   const [level, setLevel] = useState("");
@@ -25,7 +25,6 @@ function Post() {
   const [categoryId, setCategoryId] = useState("");
   const [subcategoryId, setSubcategoryId] = useState("");
   const [cards, setCards] = useState([]);
-
 
   useEffect(() => {
     async function fetchData() {
@@ -65,13 +64,14 @@ function Post() {
     }
     fetchData();
   }, []);
-   
 
   useEffect(() => {
-    if (edit === 'true') {
+    if (edit === "true") {
       async function fetchDeck() {
         try {
-          const deckResponse = await axios.get(`http://localhost:5000/deck/${deckId.id}`);
+          const deckResponse = await axios.get(
+            `http://localhost:5000/deck/${deckId.id}`
+          );
           const deckData = deckResponse.data;
           setName(deckData.name);
           setLevel(deckData.level);
@@ -80,7 +80,9 @@ function Post() {
           setCategoryId(deckData.category_id);
           setSubcategoryId(deckData.subcategory_id);
 
-          const cardsResponse = await axios.get(`http://localhost:5000/card/list/${deckId.id}`);
+          const cardsResponse = await axios.get(
+            `http://localhost:5000/card/list/${deckId.id}`
+          );
           setCards(cardsResponse.data);
           // console.log(cardsResponse.data)
         } catch (error) {
@@ -90,7 +92,6 @@ function Post() {
       fetchDeck();
     }
   }, [edit, deckId]);
-
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -107,7 +108,7 @@ function Post() {
 
     try {
       let deckResponse;
-      if (edit === 'true') {
+      if (edit === "true") {
         deckResponse = await axios.put(
           `http://localhost:5000/deck/${deckId.id}`,
           deckData
@@ -121,19 +122,17 @@ function Post() {
       const deckID = deckResponse.data._id;
       // console.log("id",(deckId))
       const newCards = [];
-     for (let i = 1; i <= deckData.card_count; i++) {
-      
-      
-      const cardData = {
-        deck_id: deckID,
-        front: cards[i - 1]?.front || '',
-        back: cards[i - 1]?.back || ''
-      };
+      for (let i = 1; i <= deckData.card_count; i++) {
+        const cardData = {
+          deck_id: deckID,
+          front: cards[i - 1]?.front || "",
+          back: cards[i - 1]?.back || "",
+        };
 
         let cardResponse;
-        if (edit === 'true') {
+        if (edit === "true") {
           const cardId = cards[i - 1]._id; // Get the card ID from the cards state
-          console.log("dd", cardId)
+          console.log("dd", cardId);
 
           cardResponse = await axios.put(
             `http://localhost:5000/card/${cardId}`,
@@ -146,7 +145,7 @@ function Post() {
           );
         }
         newCards.push(cardResponse.data);
-       console.log("Card created:", cardResponse.data);
+        console.log("Card created:", cardResponse.data);
       }
       setCards(newCards);
       console.log("Deck created:", deckResponse.data);
@@ -161,22 +160,17 @@ function Post() {
     }
   };
 
-  const handleEdit = async(event)=>{
+  const handleEdit = async (event) => {
     event.preventDefault();
     handleSubmit(event);
-
-  }
+  };
 
   return (
-    <div>
-      <div id="H-navbar">
-        <Navbar />
-      </div>
-      <div id="H-wrapper">
-        <div id="H-sidebar">
-          <Sidebar />
-        </div>
-        <div id="H-content3">
+    <>
+      <Lo />
+      <div className="postPage">
+        <Search />
+        <div>
           <div className="deckIfno">
             <div className="deck-info-first">
               <p className="userdet1">Title:</p>
@@ -204,9 +198,12 @@ function Post() {
                 onChange={(e) => setCardCount(e.target.value)}
               />
               <div>
-              <button className="userButton" onClick={edit === 'true' ? handleEdit : handleSubmit}>
-        {edit === 'true' ? 'Edit' : 'Create'}
-      </button>
+                <button
+                  className="deckButton"
+                  onClick={edit === "true" ? handleEdit : handleSubmit}
+                >
+                  {edit === "true" ? "Edit" : "Create"}
+                </button>
               </div>
             </div>
             <div className="deck-info-second">
@@ -259,55 +256,52 @@ function Post() {
                 </select>
               </div>
             </div>
-            
           </div>
-          <hr />
+          <hr className="deckInfoHr" />
           <div className="deck-info-third">
+            {Array.from({ length: cardCount }, (_, i) => i + 1).map((index) => (
+              <div className="cardsInput-section" key={index}>
+                <textarea
+                  autoComplete="off"
+                  type="text"
+                  className="cardTextL"
+                  placeholder="Front..."
+                  id={`front${index}`}
+                  value={cards[index - 1]?.front || ""}
+                  onChange={(e) => {
+                    const updatedCards = [...cards];
+                    if (!updatedCards[index - 1]) {
+                      updatedCards[index - 1] = {}; // Create a new empty object if it doesn't exist
+                    }
+                    updatedCards[index - 1].front = e.target.value;
+                    setCards(updatedCards);
+                  }}
+                />
 
-          {Array.from({ length: cardCount }, (_, i) => i + 1).map((index) => (
-  <div className="cardsInput-section" key={index}>
-    <textarea
-      autoComplete="off"
-      type="text"
-      className="cardTextL"
-      placeholder="Front..."
-      id={`front${index}`}
-      value={cards[index - 1]?.front || ''}
-      onChange={(e) => {
-        const updatedCards = [...cards];
-        if (!updatedCards[index - 1]) {
-          updatedCards[index - 1] = {}; // Create a new empty object if it doesn't exist
-        }
-        updatedCards[index - 1].front = e.target.value;
-        setCards(updatedCards);
-      }}
-    />
-
-    <textarea
-      autoComplete="off"
-      type="text"
-      className="cardTextR"
-      placeholder="Back..."
-      id={`back${index}`}
-      value={cards[index - 1]?.back || ''}
-      onChange={(e) => {
-        const updatedCards = [...cards];
-        if (!updatedCards[index - 1]) {
-          updatedCards[index - 1] = {}; // Create a new empty object if it doesn't exist
-        }
-        updatedCards[index - 1].back = e.target.value;
-        setCards(updatedCards);
-      }}
-    />
-  </div>
-))}
+                <textarea
+                  autoComplete="off"
+                  type="text"
+                  className="cardTextR"
+                  placeholder="Back..."
+                  id={`back${index}`}
+                  value={cards[index - 1]?.back || ""}
+                  onChange={(e) => {
+                    const updatedCards = [...cards];
+                    if (!updatedCards[index - 1]) {
+                      updatedCards[index - 1] = {}; // Create a new empty object if it doesn't exist
+                    }
+                    updatedCards[index - 1].back = e.target.value;
+                    setCards(updatedCards);
+                  }}
+                />
+              </div>
+            ))}
           </div>
         </div>
-        <ToastContainer/>
       </div>
-      
-    </div>
+    </>
   );
 }
 
 export default Post;
+

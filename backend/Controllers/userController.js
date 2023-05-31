@@ -77,6 +77,7 @@ export const register = async (req, res, next) =>{
               message: "User successfully created",
               user: user._id,
               token: token,
+              role: user.role,
             });
           })
           .catch((error) =>
@@ -124,6 +125,7 @@ export const login = async (req, res, next)=>{
               message: "User successfully Logged in",
               user: user._id,
               token: token,
+              role: user.role,
             });
           } else {
             res.status(400).json({ message: "Login not succesful" });

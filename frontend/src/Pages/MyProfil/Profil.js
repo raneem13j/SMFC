@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Profil.css";
-import Navbar from "../../Components/NavBar/navbar";
-import Sidebar from "../../Components/SideBar/sidebar";
+
 import { Link } from "react-router-dom";
 import PopupProfil from "./PopupProfil";
 import PopupEdit from "./PopupEdit";
@@ -15,7 +14,10 @@ import IconButton, { IconButtonProps } from "@mui/material/IconButton";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from "@mui/icons-material/Edit";
+import Lo from "../../Components/Test/Lo";
+import Search from "../../Components/Search/search";
+import { useMediaQuery } from 'react-responsive';
 
 function Profil() {
   const userId = sessionStorage.getItem("Id");
@@ -35,9 +37,10 @@ function Profil() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [ saveMode , setSaveMode] = useState(false);
-  const [ postMode , setPostMode] = useState(true);
-  const [ saved , setSaved] = useState([]);
+  const [saveMode, setSaveMode] = useState(false);
+  const [postMode, setPostMode] = useState(true);
+  const [saved, setSaved] = useState([]);
+  const isMobile = useMediaQuery({ maxWidth: 400 });
 
   //fetching decks by user id
   useEffect(() => {
@@ -47,7 +50,7 @@ function Profil() {
           `http://localhost:5000/deck/byuser/${userId}`
         );
         setDecks(response.data);
-        console.log("decks",response.data)
+        // console.log("decks", response.data);
       } catch (error) {
         console.log(error);
       }
@@ -126,10 +129,9 @@ function Profil() {
         console.error(error);
       }
     }
-     if(saveMode === true){
+    if (saveMode === true) {
       handleListSaved();
-     }
-
+    }
   };
 
   // make down vote on deck
@@ -188,9 +190,9 @@ function Profil() {
       }
     }
 
-    if(saveMode === true){
+    if (saveMode === true) {
       handleListSaved();
-     }
+    }
   };
 
   //delete deck
@@ -253,7 +255,7 @@ function Profil() {
     setPopup(true);
     fetchFollowers();
   };
- const fetchFollowers = async () => {
+  const fetchFollowers = async () => {
     try {
       const response = await axios.get(
         `http://localhost:5000/userfollower/followers/${userId}`
@@ -268,7 +270,6 @@ function Profil() {
   useEffect(() => {
     fetchFollowers();
   }, []);
- 
 
   // fetch the following
 
@@ -315,7 +316,7 @@ function Profil() {
 
   // edit loged in user info
 
-  const handelEditProfil = async(e) =>{
+  const handelEditProfil = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.put(
@@ -323,7 +324,7 @@ function Profil() {
         {
           username: username,
           email: email,
-          password: password
+          password: password,
         }
       );
       setUser("sucssful", response.data);
@@ -334,54 +335,46 @@ function Profil() {
       console.error(error);
     }
     try {
-      const response = await axios.get(
-        `http://localhost:5000/user/${userId}`
-      );
+      const response = await axios.get(`http://localhost:5000/user/${userId}`);
       setUser(response.data);
       // console.log("decks", response.data);
     } catch (error) {
       console.log(error);
     }
+  };
 
-  }
+  const handleListSaved = async () => {
+    setSaveMode(true);
+    setPostMode(false);
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/saved/list/${userId}`
+      );
+      setSaved(response.data);
+      // console.log("decks", response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  const handleListSaved = async()=>{
-       setSaveMode(true);
-       setPostMode(false);
-       try {
-        const response = await axios.get(
-          `http://localhost:5000/saved/list/${userId}`
-        );
-        setSaved(response.data);
-        console.log("decks", response.data);
-      } catch (error) {
-        console.log(error);
-      }
-  }
-
-  const handleListPost = async()=>{
-     setSaveMode(false);
-     setPostMode(true);
-
-  }
+  const handleListPost = async () => {
+    setSaveMode(false);
+    setPostMode(true);
+  };
 
   return (
-    <div>
-      <div id="H-navbar">
-        <Navbar />
-      </div>
-      <div id="H-wrapper">
-        <div id="H-sidebar">
-          <Sidebar />
-        </div>
-        <div id="H-content3">
+    <>
+      <Lo />
+      <div className="myProfilPage">
+        <Search />
+        <div>
           <div className="userProfil">
             <div>
               <p className="userdet">{user.username}</p>
               <p className="userdet">{user.email}</p>
-              <div className="infoProfil">
+              <div className="myProfilInfo">
                 <div className="btn1">
-                  <button className="userButton" onClick={handleFollowersClick}>
+                  <button className="myProfilButton" onClick={handleFollowersClick}>
                     Followers
                   </button>
                   <PopupProfil trigger={popup} setTrigger={setPopup}>
@@ -399,7 +392,7 @@ function Profil() {
                     </div>
                   </PopupProfil>
 
-                  <button className="userButton" onClick={handleFollowingClick}>
+                  <button className="myProfilButton" onClick={handleFollowingClick}>
                     Following
                   </button>
                   <PopupProfil trigger={popupF} setTrigger={setPopupF}>
@@ -420,7 +413,7 @@ function Profil() {
                       ))}
                     </div>
                   </PopupProfil>
-                  <button className="userButton" onClick={handleTopicClick}>
+                  <button className="myProfilButton" onClick={handleTopicClick}>
                     Followed Topics
                   </button>
                   <PopupProfil trigger={popupT} setTrigger={setPopupT}>
@@ -443,17 +436,20 @@ function Profil() {
                   </PopupProfil>
                 </div>
                 <div className="btn2">
-                  <Link className="cardLink" to={`/post/${userId}?edit=false`} >
-                  <button className="userButton">Add Post</button>
+                  <Link className="cardLink" to={`/post/${userId}?edit=false`}>
+                    <button className="myProfilButton">Add Post</button>
                   </Link>
                   <button
-                    className="userButton"
+                    className="myProfilButton"
                     onClick={() => setPopupE(true)}
                   >
                     Edit profile
                   </button>
                   <PopupEdit trigger={popupE} setTrigger={setPopupE}>
-                    <form onSubmit={handelEditProfil} className="login-signup-box">
+                    <form
+                      onSubmit={handelEditProfil}
+                      className="login-signup-box"
+                    >
                       <label className="formLabel">Username</label>
                       <input
                         autoComplete="off"
@@ -488,23 +484,22 @@ function Profil() {
                       <button className="userButtonPop1">Edit profile</button>
                     </form>
                   </PopupEdit>
-
-                  {/* <button className="userButton">Delete Account</button> */}
                 </div>
               </div>
             </div>
           </div>
-          <hr />
-          <div className="infoProfil1">
-            <button className="userButton" onClick={handleListPost}>Posts</button>
-            <button className="userButton" onClick={handleListSaved}>Saved</button>
+          <hr className="myProfilHr" />
+          <div className="myProfilInfo2">
+            <button className="myProfilButton" onClick={handleListPost}>Posts</button>
+            <button className="myProfilButton" onClick={handleListSaved}>Saved</button>
           </div>
           {postMode && (
           <div className="posts-section2">
             {decks.map((deck) => (
-              <div className="card-section" key={deck.id}>
+              <div className="card-section" key={deck._id}>
                 <Card
-                  key={deck.id}
+                id="myProfilCard"
+                  key={deck._id}
                   sx={{
                     minWidth: 275,
                     width: 400,
@@ -512,7 +507,7 @@ function Profil() {
                     boxShadow: "6px 6px 6px rgb(150, 150, 150)",
                   }}
                 >
-                  <CardContent key={deck.id}>
+                  <CardContent key={deck._id}>
                     <Typography
                       style={{ color: "#2c6487" }}
                       variant="h5"
@@ -572,7 +567,7 @@ function Profil() {
                     <IconButton onClick={(e) => handleDeleteDeck(e, deck._id)}>
                       <DeleteIcon className="delete-icon" />
                     </IconButton>
-                    <IconButton style={{ marginLeft: "70px" }}>
+                    <IconButton style={{ marginLeft: isMobile ? "0" : "70px" }}>
                         <Link className="cardLink" to={`/post/${deck._id}?edit=true`}>
                             <EditIcon style={{ color: "#2c6487"}}/>
                           </Link>
@@ -586,9 +581,10 @@ function Profil() {
           {saveMode && (
           <div className="posts-section2">
             {saved.map((deck) => (
-              <div className="card-section" key={deck.id}>
+              <div className="card-section" key={deck._id}>
                  <Card
-                       key={deck.id}
+                  id="myProfilCard2"
+                       key={deck._id}
                         sx={{
                           minWidth: 275,
                           width: 400,
@@ -596,7 +592,7 @@ function Profil() {
                           boxShadow: "6px 6px 6px rgb(150, 150, 150)",
                         }}
                       >
-                        <CardContent key={deck.id}>
+                        <CardContent key={deck._id}>
                           <Typography style={{ color: "#2c6487" }} variant="h5" component="div" key={deck.id}>
                             {deck.name}
                           </Typography>
@@ -650,10 +646,13 @@ function Profil() {
             ))}
           </div>
           )}
+
+
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
 export default Profil;
+
